@@ -1,0 +1,17 @@
+# dataset setting
+# paths are relative to main.py
+dataset: anet
+input_json: 'dataset/anet/cap_anet_trainval.json'
+input_dic: 'dataset/anet/dic_anet.json'
+seg_feature_root: '/local-scratch/ActivityNet/vid-frame-wise-features/rgb_motion_1d'
+image_path: 'dataset/anet/frames_10frm' # for visualization only
+feature_root: '/local-scratch/ActivityNet/region-features/fc6_feat_100rois'
+proposal_h5: '/local-scratch/ActivityNet/region-detections/anet_detection_vg_fc6_feat_100rois.h5'
+num_prop_per_frm: 100
+data_path: 'dataset'
+# language model
+att_model: topdown
+num_layers: 1
+seq_per_img: 1
+val_images_use: -1
+optim: 'adam'
