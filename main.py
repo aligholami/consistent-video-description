@@ -160,10 +160,10 @@ def eval_grounding(opt, vis=None):
         cls_pred_lst.append(cls_pred_hm_lst)
 
     # write results to file
-    attn_file = '../experiments/results/attn-gt-sent-results-'+opt.val_split+'-'+opt.id+'.json'
+    attn_file = './experiments/results/attn-gt-sent-results-'+opt.val_split+'-'+opt.id+'.json'
     with open(attn_file, 'w') as f:
-        json.dump({'../experiments/results':att2_output, 'eval_mode':'GT', 'external_data':{'used':True, 'details':'Object detector pre-trained on Visual Genome on object detection task.'}}, f)
-    grd_file = '../experiments/results/grd-gt-sent-results-'+opt.val_split+'-'+opt.id+'.json'
+        json.dump({'./experiments/results':att2_output, 'eval_mode':'GT', 'external_data':{'used':True, 'details':'Object detector pre-trained on Visual Genome on object detection task.'}}, f)
+    grd_file = './experiments/results/grd-gt-sent-results-'+opt.val_split+'-'+opt.id+'.json'
     with open(grd_file, 'w') as f:
         json.dump({'results':grd_output, 'eval_mode':'GT', 'external_data':{'used':True, 'details':'Object detector pre-trained on Visual Genome on object detection task.'}}, f)
 
@@ -422,7 +422,7 @@ def eval(epoch, opt, vis=None, vis_window=None):
     if opt.language_eval:
         print('Total videos to be evaluated %d' %(len(predictions)))
 
-        submission = '../experiments/results/'+'densecap-'+opt.val_split+'-'+opt.id+'.json'
+        submission = './experiments/results/'+'densecap-'+opt.val_split+'-'+opt.id+'.json'
         dense_cap_all = {'version':'VERSION 1.0', 'results':predictions,
                          'external_data':{'used':'true',
                           'details':'Visual Genome for Faster R-CNN pre-training'}}
@@ -450,7 +450,7 @@ def eval(epoch, opt, vis=None, vis_window=None):
 
     if opt.eval_obj_grounding:
         # write attention results to file
-        attn_file = '../experiments/results/attn-gen-sent-results-'+opt.val_split+'-'+opt.id+'.json'
+        attn_file = './experiments/results/attn-gen-sent-results-'+opt.val_split+'-'+opt.id+'.json'
         with open(attn_file, 'w') as f:
             json.dump({'results':grd_output, 'eval_mode':'gen', 'external_data':{'used':True, 'details':'Object detector pre-trained on Visual Genome on object detection task.'}}, f)
 

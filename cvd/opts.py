@@ -125,7 +125,7 @@ def parse_opt():
                     help='')
     parser.add_argument('--inference_only', action='store_true',
                     help='')
-    parser.add_argument('--densecap_references', type=str, nargs='+', default=['../dataset/anet/anet_entities_val_1.json', '../dataset/anet/anet_entities_val_2.json'],
+    parser.add_argument('--densecap_references', type=str, nargs='+', default=['./cvd/dataset/anet/anet_entities_val_1.json', './cvd/dataset/anet/anet_entities_val_2.json'],
                         help='reference files with ground truth captions to compare results against. delimited (,) str')
     parser.add_argument('--densecap_verbose', action='store_true', help='evaluate CIDEr only or all language metrics in densecap')
     parser.add_argument('--grd_reference', type=str, default='cvd/tools/anet_entities/data/anet_entities_cleaned_class_thresh50_trainval.json')
@@ -143,7 +143,7 @@ def parse_opt():
                     help='how many segments to use when periodically evaluating the validation loss? (-1 = all)')
     parser.add_argument('--val_every_epoch', type=int, default=2,
                     help='how many segments to use when periodically evaluating the validation loss? (-1 = all)')
-    parser.add_argument('--checkpoint_path', type=str, default='../experiments/save',
+    parser.add_argument('--checkpoint_path', type=str, default='./experiments/save',
                     help='directory to store checkpointed models')
     parser.add_argument('--language_eval', action='store_true',
                     help='Evaluate language as well (1 = yes, 0 = no)?')
