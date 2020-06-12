@@ -125,7 +125,7 @@ def parse_opt():
                     help='')
     parser.add_argument('--inference_only', action='store_true',
                     help='')
-    parser.add_argument('--densecap_references', type=str, nargs='+', default=['./cvd/dataset/anet/anet_entities_val_1.json', './cvd/dataset/anet/anet_entities_val_2.json'],
+    parser.add_argument('--densecap_references', type=str, nargs='+', default=['./dataset/anet/anet_entities_val_1.json', './dataset/anet/anet_entities_val_2.json'],
                         help='reference files with ground truth captions to compare results against. delimited (,) str')
     parser.add_argument('--densecap_verbose', action='store_true', help='evaluate CIDEr only or all language metrics in densecap')
     parser.add_argument('--grd_reference', type=str, default='cvd/tools/anet_entities/data/anet_entities_cleaned_class_thresh50_trainval.json')
