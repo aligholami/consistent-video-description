@@ -1,0 +1,9 @@
+[submodule "cvd/tools/cocoapi"]
+	path = cvd/tools/cocoapi
+	url = git@github.com:cocodataset/cocoapi.git
+[submodule "cvd/tools/apex"]
+	path = cvd/tools/apex
+	url = https://github.com/NVIDIA/apex.git
+[submodule "cvd/tools/detection"]
+	path = cvd/tools/detection
+	url = https://github.com/KaihuaTang/Scene-Graph-Benchmark.pytorch.git
