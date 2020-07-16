@@ -9,6 +9,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -38,8 +39,6 @@ import sys
 sys.path.insert(0, os.path.join(_SCRIPTPATH_, 'cvd/tools/densevid_eval'))
 sys.path.insert(0, os.path.join(_SCRIPTPATH_, 'cvd/tools/densevid_eval/coco-caption'))
 sys.path.insert(0, os.path.join(_SCRIPTPATH_, 'cvd/tools/anet_entities/scripts'))
-
-
 from cvd import opts
 import cvd.models.AttModel as AttModel
 from cvd.tools import utils
@@ -47,7 +46,6 @@ from collections import defaultdict
 
 from evaluate import ANETcaptions
 from eval_grd_anet_entities import ANetGrdEval
-
 
 # visualization over generated sentences
 def vis_infer(seg_show, seg_id, caption, att2_weights, proposals, num_box, gt_bboxs, sim_mat, seg_dim_info):
@@ -125,6 +123,9 @@ def eval_grounding(opt, vis=None):
         sample_idx = Variable(sample_idx.type(input_seqs.type()))
 
         dummy = input_ppls.new(input_ppls.size(0)).byte().fill_(0)
+
+        from maskrcnn_benchmark.modeling.roi_heads.relation_head.relation_head import build_roi_relation_head
+        from maskrcnn_benchmark.structures.bounding_box import BoxList
 
         # cls_pred_hm_lst contains a list of tuples (clss_ind, hit/1 or miss/0)
         cls_pred_hm_lst, att2_ind, grd_ind = model(segs_feat, input_seqs, gt_seqs, input_num,

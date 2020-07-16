@@ -106,7 +106,7 @@ def parse_opt():
                     help='epsilon that goes into denominator for smoothing')
     parser.add_argument('--weight_decay', type=float, default=0,
                     help='weight_decay')
-
+    parser.add_argument('--relation_head_config', type=str, default='./cvd/tools/scene_graph_parser/configs/e2e_relation_R_101_FPN_1x.yaml')
     # set training session
     parser.add_argument('--start_from', type=str, default=None,
                     help="""continue training from saved model at this path. Path must contain files saved by previous training process: 

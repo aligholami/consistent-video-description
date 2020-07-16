@@ -49,6 +49,7 @@ class AttModel(CaptionModel):
         self.num_sampled_frm = opt.num_sampled_frm
         self.num_prop_per_frm = opt.num_prop_per_frm
         self.att_model = opt.att_model
+        self.relation_head_config = opt.relation_head_config
         self.unk_idx = int(opt.wtoi['UNK'])
 
         if opt.region_attn_mode == 'add':
@@ -70,11 +71,13 @@ class AttModel(CaptionModel):
         self.min_value = -1e8
         opt.beta = 1
         self.beta = opt.beta
-
+        
+        # Transform bbox coordinates, 5D to 300D
         self.loc_fc = nn.Sequential(nn.Linear(5, 300),
                                     nn.ReLU(),
                                     nn.Dropout(inplace=True))
-
+        
+        # Sentence embeddings
         self.embed = nn.Sequential(nn.Embedding(self.vocab_size,
                                 self.input_encoding_size), # det is 1-indexed
                                 nn.ReLU(),
@@ -88,22 +91,26 @@ class AttModel(CaptionModel):
             self.vis_encoding_size = 300
         else:
             raise NotImplementedError
-
+    
+        # Object classes embedding
         self.vis_embed = nn.Sequential(nn.Embedding(self.detect_size+1,
                                 self.vis_encoding_size), # det is 1-indexed
                                 nn.ReLU(),
                                 nn.Dropout(self.drop_prob_lm, inplace=True)
                                 )
-
+        
         self.fc_embed = nn.Sequential(nn.Linear(self.fc_feat_size, self.rnn_size),
                                     nn.ReLU(),
                                     nn.Dropout(self.drop_prob_lm, inplace=True))
 
         # seg_info_embed will be [batch_size, 50]
+        # Segment info includes information such as segment_id, num_segments_in_video, start_ts, end_ts 
         self.seg_info_embed = nn.Sequential(nn.Linear(4, self.seg_info_size),
                                     nn.ReLU(),
                                     nn.Dropout(self.drop_prob_lm, inplace=True))
 
+        # Used to attend to motion/spatial features in the rnn
+        # The result will be a vector of size [batch_size, rnn_size]
         self.att_embed = nn.ModuleList([nn.Sequential(nn.Linear(2048, self.rnn_size//2), # for rgb feature
                                                       nn.ReLU(),
                                                       nn.Dropout(self.drop_prob_lm, inplace=True)),
@@ -113,7 +120,7 @@ class AttModel(CaptionModel):
 
         self.att_embed_aux = nn.Sequential(nn.BatchNorm1d(self.rnn_size),
                                           nn.ReLU())
-
+        
         self.pool_embed = nn.Sequential(nn.Linear(self.pool_feat_size, self.rnn_size),
                                     nn.ReLU(),
                                     nn.Dropout(self.drop_prob_lm, inplace=True))
@@ -123,6 +130,7 @@ class AttModel(CaptionModel):
 
         self.logit = nn.Linear(self.rnn_size, self.vocab_size)
 
+        # If activated, encodes object relations with a transformer.
         if opt.obj_interact:
             n_layers = 2
             n_heads = 6
@@ -134,6 +142,7 @@ class AttModel(CaptionModel):
                 drop_ratio=attn_drop,
                 pe=False)
 
+        # If att_model set to 'transformer', uses a decoder to generate descriptions (unsupervised)
         if self.att_model == 'transformer':
             n_layers = 2
             n_heads = 6
@@ -142,6 +151,7 @@ class AttModel(CaptionModel):
             self.cap_model = TransformerDecoder(self.rnn_size, 0, self.vocab_size, \
                 d_hidden = self.rnn_size//2, n_layers=n_layers, n_heads=n_heads, drop_ratio=attn_drop)
 
+        # Sets the temporal attention mode to either bilstm or bigru (default set to bigru)
         if opt.t_attn_mode == 'bilstm': # frame-wise feature encoding
             n_layers = 2
             attn_drop = 0.2
@@ -223,7 +233,6 @@ class AttModel(CaptionModel):
             import visdom
             self.vis = visdom.Visdom(server=opt.visdom_server, env='vis-'+opt.id)
 
-
     def forward(self, segs_feat, seq, gt_seq, num, ppls, gt_boxes, mask_boxes, ppls_feat, frm_mask, sample_idx, pnt_mask, opt, eval_opt = {}):
         if opt == 'MLE':
             return self._forward(segs_feat, seq, gt_seq, ppls, gt_boxes, mask_boxes, num, ppls_feat, frm_mask, sample_idx, pnt_mask)
@@ -281,6 +290,7 @@ class AttModel(CaptionModel):
 
 
     def _forward(self, segs_feat, input_seq, gt_seq, ppls, gt_boxes, mask_boxes, num, ppls_feat, frm_mask, sample_idx, pnt_mask, eval_obj_ground=False):
+        
         # gt_seq shape: [batch_size, 10, 20]
         # Choose the first sequence (the whole sequence) for this frame across all batches
         seq = gt_seq[:, :self.seq_per_img, :].clone().view(-1, gt_seq.size(2))
